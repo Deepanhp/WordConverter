@@ -20,11 +20,43 @@ class WordConverter
     results = {}
     total_number = keys.length - 1 
 
-    first_array = keys[0..total_number]
-    first_combination = first_array.shift.product(*first_array).map(&:join)
-    print first_combination
-  end
+    for i in (1..total_number)
+      first_array = keys[0..i]
 
+      next if first_array.length < 2
+      second_array = keys[i + 1..total_number]
+      
+      next if second_array.length < 2
+      f_comb = first_array.shift.product(*first_array).map(&:join) 
+      # print "\nf_comb"
+      # print f_comb
+      next if f_comb.nil?
+      s_comb = second_array.shift.product(*second_array).map(&:join)
+      # print "\n s_comb"
+      # print s_comb
+      next if s_comb.nil?
+      results[i] = [(f_comb & dictionary[i+2]), (s_comb & dictionary[total_number - i +1])] 
+      # print "\n results"
+      # print results[i]
+    end
+
+    final_words = []
+    results.each do |key, combinations|
+      # print "\n" 
+      # print combinations
+      next if combinations.first.nil? || combinations.last.nil?
+      combinations.first.product(combinations.last).each do |combo_words|
+        final_words << combo_words
+      end
+      # print "\n final words \n"
+      # print final_words
+    end
+    
+    final_words << (keys.shift.product(*keys).map(&:join) & dictionary[11]).join(", ") 
+    # time_end = Time.now()
+    # puts "Time #{time_end.to_f - time_start.to_f}"
+    final_words
+  end
 end
 
 final_words = WordConverter.new().letter_comb("2282668687")
